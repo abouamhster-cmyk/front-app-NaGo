@@ -7,6 +7,12 @@ class GetNearbyDriversEvent extends RideEvent {
   GetNearbyDriversEvent(this.latitude, this.longitude);
 }
 
+// Déclenché en direct lorsque le conducteur déclare le montant reçu en espèces
+class OnCashPaymentDeclaredEvent extends RideEvent {
+  final Map<String, dynamic> paymentDetails;
+  OnCashPaymentDeclaredEvent(this.paymentDetails);
+}
+
 // Action de lancer la réservation
 class RequestRideEvent extends RideEvent {
   final String typeService;
