@@ -1,14 +1,12 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'api_client.dart'; // Pour récupérer l'adresse de base du serveur
+import 'api_client.dart';
 
 class WebSocketClient {
   late io.Socket _socket;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  // Initialiser et connecter le canal WebSocket
   Future<void> connect() async {
-    // Récupérer le token d'authentification de l'utilisateur
     final token = await _storage.read(key: "auth_token");
 
     if (token == null) {
@@ -16,30 +14,30 @@ class WebSocketClient {
       return;
     }
 
-    // Configuration de Socket.io avec le Handshake d'authentification
     _socket = io.io(
-      ApiClient.baseUrl.replaceAll('/api', ''), // On vise la racine pour les sockets
+      ApiClient.baseUrl.replaceAll('/api', ''),
       io.OptionBuilder()
-          .setTransports(['websocket']) // Forcer l'utilisation de WebSocket
-          .setAuth({'token': token})     // Injection sécurisée du Token JWT
+          .setTransports(['websocket'])
+          .setAuth({'token': token})
           .enableAutoConnect()
           .build(),
     );
 
-    _socket.onConnect((_) {
-      print("🔌 Connecté avec succès au serveur WebSocket NaGo !");
-    });
-
-    _socket.onDisconnect((_) {
-      print("🔌 Déconnecté du serveur WebSocket.");
-    });
-
-    _socket.onConnectError((data) {
-      print("❌ Erreur de connexion WebSocket : $data");
-    });
+    _socket.onConnect((_) => print("🔌 Connecté au serveur WebSocket NaGo !"));
+    _socket.onDisconnect((_) => print("🔌 Déconnecté du serveur WebSocket."));
+    _socket.onConnectError((data) => print("❌ Erreur de connexion WebSocket : $data"));
   }
 
-  // Émettre (envoyer) la position GPS au serveur
+  // NOUVEAU : Écouter un événement spécifique en direct (ex: 'new_bid_received')
+  void onEvent(String event, Function(dynamic) callback) {
+    _socket.on(event, callback);
+  }
+
+  // NOUVEAU : Arrêter d'écouter un événement pour libérer de la mémoire
+  void offEvent(String event) {
+    _socket.off(event);
+  }
+
   void emitLocation(double latitude, double longitude) {
     if (_socket.connected) {
       _socket.emit('update_location', {
@@ -49,7 +47,6 @@ class WebSocketClient {
     }
   }
 
-  // Se déconnecter proprement
   void disconnect() {
     _socket.disconnect();
   }
