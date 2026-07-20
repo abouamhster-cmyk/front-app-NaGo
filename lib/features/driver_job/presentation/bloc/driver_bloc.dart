@@ -10,13 +10,12 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
 
   DriverBloc(this._driverService, this._webSocketClient) : super(DriverInitialState()) {
     
-    // Initialiser l'écoute en direct du serveur WebSocket
+    // Initialiser l'écoute en direct du serveur WebSocket pour l'acceptation de l'offre
     _webSocketClient.onEvent('bid_accepted', (data) {
-      // Dès que le serveur nous dit que notre offre est acceptée, on déclenche l'événement dans le BLoC
       add(OnBidAcceptedEvent(data as Map<String, dynamic>));
     });
 
-    // 1. Gestion de la soumission de l'offre
+    // 1. Gestion de la soumission de l'offre (Bid)
     on<SubmitBidEvent>((event, emit) async {
       emit(DriverLoadingState());
       try {
@@ -32,7 +31,21 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
 
     // 2. Gestion de la notification d'acceptation de l'offre
     on<OnBidAcceptedEvent>((event, emit) {
-      emit(DriverJobAcceptedState(event.rideDetails));
+      emit(DriverJobAcceptedState(event.roleDetails)); // ou event.rideDetails selon l'état
+    });
+
+    // 3. Gestion de la mise à jour du statut physique du trajet (Arrivé départ, Démarré, Terminé)
+    on<UpdateRideStatusEvent>((event, emit) async {
+      emit(DriverLoadingState());
+      try {
+        final updatedRide = await _driverService.updateRideStatus(
+          rideId: event.rideId,
+          nouveauStatut: event.nouveauStatut,
+        );
+        emit(RideStatusUpdateSuccessState(updatedRide));
+      } catch (e) {
+        emit(DriverFailureState(e.toString()));
+      }
     });
   }
 
