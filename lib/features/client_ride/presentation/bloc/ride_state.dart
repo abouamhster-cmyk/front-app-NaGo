@@ -20,3 +20,9 @@ class RideFailureState extends RideState {
   final String errorMessage;
   RideFailureState(this.errorMessage);
 }
+
+// Ordonne à l'interface d'afficher la boîte de dialogue de validation/litige
+class CashPaymentValidationRequiredState extends RideState {
+  final Map<String, dynamic> paymentDetails;
+  CashPaymentValidationRequiredState(this.paymentDetails);
+}
