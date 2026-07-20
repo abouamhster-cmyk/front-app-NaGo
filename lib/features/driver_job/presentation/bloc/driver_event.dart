@@ -19,3 +19,15 @@ class UpdateRideStatusEvent extends DriverEvent {
   final String nouveauStatut; // 'arrive_depart', 'en_cours', 'termine'
   UpdateRideStatusEvent(this.rideId, this.nouveauStatut);
 }
+
+// Déclenché en direct si le client valide les espèces
+class OnPaymentValidatedEvent extends DriverEvent {
+  final Map<String, dynamic> data;
+  OnPaymentValidatedEvent(this.data);
+}
+
+// Déclenché en direct si le client signale un litige (compte restreint)
+class OnAccountRestrictedEvent extends DriverEvent {
+  final Map<String, dynamic> restrictionDetails;
+  OnAccountRestrictedEvent(this.restrictionDetails);
+}
