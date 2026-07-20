@@ -43,3 +43,17 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     return super.close();
   }
 }
+
+
+// Indique au chauffeur que la mission est validée avec succès
+class DriverPaymentValidatedState extends DriverState {
+  final Map<String, dynamic> data;
+  DriverPaymentValidatedState(this.data);
+}
+
+// Bloque l'interface du chauffeur en affichant la notification de restriction de 2 jours
+class DriverAccountRestrictedState extends DriverState {
+  final String raison;
+  final String finRestriction;
+  DriverAccountRestrictedState(this.raison, this.finRestriction);
+}
