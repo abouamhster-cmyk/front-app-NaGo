@@ -1,1 +1,19 @@
+dependencies:
+  flutter:
+    sdk: flutter
 
+  # Gestion de l'état (State Management)
+  flutter_bloc: ^8.1.3
+  
+  # Communication HTTP avec le serveur
+  dio: ^5.4.3
+  
+  # Stockage hautement sécurisé des clés API et du Token JWT sur le téléphone
+  flutter_secure_storage: ^9.0.0
+  
+  # Intégration Supabase officielle pour Flutter (Auth, Stockage de fichiers)
+  supabase_flutter: ^2.4.0
+  
+  # Cartographie et Localisation
+  google_maps_flutter: ^2.5.3
+  geolocator: ^10.1.0
